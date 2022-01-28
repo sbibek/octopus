@@ -17,7 +17,7 @@ class AppEngine {
 	
 	loadApp(appMetadata) {
 		// lets check if the application is already loaded
-		if(appMetadata.name in this.apps) {
+		if(this.isAppLoaded(appMetadata.name)) {
 			// this means the app is already loaded
 			return Promise.reject({'reason': `App ${appMetadata.name} already loaded!!`});
 		}
@@ -41,7 +41,7 @@ class AppEngine {
 
 	startApp(appMetadata) {
 		// the app must be loaded to be started
-		if(!(appMetadata.name in this.apps)) {
+		if(!this.isAppLoaded(appMetadata.name)) {
 			return Promise.reject({'reason': `App ${appMetadata.name} not loaded!!`})
 		}
 		
@@ -59,21 +59,50 @@ class AppEngine {
 	}
 
 	restartApp(appMetadata) {
-		if(!(appMetadata.name in this.apps)) {
+		// make sure the app is loaded and started to be restarted
+		if(!this.isAppLoaded(appMetadata.name)) {
 			return Promise.reject({'reason': `App ${appMetadata.name} not loaded!!`})
+		} else if(!this.isAppStarted(appMetadata.name)) {
+			return Promise.reject({'reason': `App ${appMetadata.name} needs to be stopped before removing!!`})
+		}
+
+		return this.stopApp(appMetadata).then(() => {
+			return this.startApp(appMetadata)
+		})	
+	}
+
+	stopApp(appMetadata) {
+		if(!this.isAppLoaded(appMetadata.name)) {
+			return Promise.reject({'reason': `App ${appMetadata.name} not loaded!!`})
+		} else if(!this.isAppStarted(appMetadata.name)) {
+			return Promise.reject({'reason': `App ${appMetadata.name} needs to be stopped before removing!!`})
 		}
 		
 		let app = this.apps[appMetadata.name].instance
 		// now we first call the destructor lifecycle
 		app.octoDestructor()
-		this.startApp(appMetadata)
+		delete this.apps[appMetadata.name]['instance']
 		return Promise.resolve()
 	}
 
-	stopApp() {
+	removeApp(appMetadata) {
+		if(!this.isAppLoaded(appMetadata.name)) {
+			return Promise.reject({'reason': `App ${appMetadata.name} not loaded!!`})
+		} else if(!this.isAppStarted(appMetadata.name)) {
+			return Promise.reject({'reason': `App ${appMetadata.name} needs to be stopped before removing!!`})
+		}
+
+		// now lets remove
+		appUtil.removeAppCache(appMetadata.name)
+		return Promise.resolve()
 	}
 
-	removeApp() {
+	isAppLoaded(appName) {
+		return appName in this.apps
+	}
+
+	isAppStarted(appName) {
+		return appName in this.apps && 'instance' in this.apps[appName]
 	}
 }
 
