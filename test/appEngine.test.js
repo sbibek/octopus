@@ -27,7 +27,7 @@ describe('AppEngine Tests',() => {
 	})
 
 	it('Starting app that does not exist should reject the promise', () => {
-		return engine.startApp({'name': 'skfjskjfd'})
+		return engine.startApp('skfjskjfd')
 		.then(() => { assert.equal(true, false)})
 		.catch(err => {
 			assert.equal(true, true)
@@ -35,7 +35,7 @@ describe('AppEngine Tests',() => {
 	})
 	
 	it('Starting app that is not loaded should reject the promise', () => {
-		return engine.startApp({'name': 'Dummy'})
+		return engine.startApp('Dummy')
 		.then(() => { assert.equal(true, false)})
 		.catch(err => {
 			assert.equal(true, true)
@@ -43,22 +43,22 @@ describe('AppEngine Tests',() => {
 	})
 
 	it('Load -> isLoaded -> start -> isStarted -> stop lifecycle should work', () => {
-		return engine.loadApp({'name':'Dummy'})
+		return engine.loadApp('Dummy')
 		.then(() => {
 			assert.equal(engine.isAppLoaded('Dummy'), true)
 		})
 		.then(() => {
-			return engine.startApp({'name': 'Dummy'})
+			return engine.startApp('Dummy')
 		}).then(() => {
 			assert.equal(engine.isAppStarted('Dummy'), true)
 		}).then(() => {
-			return engine.stopApp({'name':'Dummy'})
+			return engine.stopApp('Dummy')
 		}).then(() => {
 			assert.equal(engine.isAppLoaded('Dummy'), true)
 			assert.equal(engine.isAppStarted(), false)
 		})
 		.then(() => {
-			return engine.removeApp({'name': 'Dummy'})
+			return engine.removeApp('Dummy')
 		})
 		.then(() => {
 			assert.equal(engine.isAppStarted(), false)
