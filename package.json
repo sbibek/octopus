@@ -1,0 +1,22 @@
+{
+  "name": "octopus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "octopus.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sbibek/octopus.git"
+  },
+  "author": "Bibek Shrestha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sbibek/octopus/issues"
+  },
+  "homepage": "https://github.com/sbibek/octopus#readme",
+  "devDependencies": {
+    "mocha": "^9.2.0"
+  }
+}
