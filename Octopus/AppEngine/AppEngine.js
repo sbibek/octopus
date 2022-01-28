@@ -1,9 +1,9 @@
-appUtil = require('../../Apps')
-
 class AppEngine {
 
-	constructor() {
+	constructor(octoFactory) {
 		this.apps = {}
+		this.appUtil = octoFactory.get('apps')
+		this.statusCodes = octoFactory.get('statusCodes')
 	}
 
 	startEngine() {
@@ -22,7 +22,7 @@ class AppEngine {
 			return Promise.reject({'reason': `App ${appMetadata.name} already loaded!!`});
 		}
 		// lets load the app if it is available
-		let appInfo = appUtil.load(appMetadata.name)
+		let appInfo = this.appUtil.load(appMetadata.name)
 		if(appInfo == null) {
 			// if app is not available, log the error and return
 			console.error(`[AppEngine] Application "${appMetadata.name}" not found!!`)
@@ -35,7 +35,7 @@ class AppEngine {
 	}
 
 	reloadApp(appMetadata) {
-		appUtil.removeAppCache(appMetadata.name)
+		this.appUtil.removeAppCache(appMetadata.name)
 		this.loadApp(appMetadata)
 	}
 
@@ -88,12 +88,13 @@ class AppEngine {
 	removeApp(appMetadata) {
 		if(!this.isAppLoaded(appMetadata.name)) {
 			return Promise.reject({'reason': `App ${appMetadata.name} not loaded!!`})
-		} else if(!this.isAppStarted(appMetadata.name)) {
+		} else if(this.isAppStarted(appMetadata.name)) {
 			return Promise.reject({'reason': `App ${appMetadata.name} needs to be stopped before removing!!`})
 		}
 
 		// now lets remove
-		appUtil.removeAppCache(appMetadata.name)
+		this.appUtil.removeAppCache(appMetadata.name)
+		delete this.apps[appMetadata.name]
 		return Promise.resolve()
 	}
 
