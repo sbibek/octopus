@@ -18,5 +18,8 @@
   "homepage": "https://github.com/sbibek/octopus#readme",
   "devDependencies": {
     "mocha": "^9.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.25.0"
   }
 }
